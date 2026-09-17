@@ -47,8 +47,7 @@ Architecture
                     +------------+
 
 
-Project structure
-
+```text
 first_agent_project/
 ├── agent/
 │   ├── agent.py
@@ -62,3 +61,4 @@ first_agent_project/
 ├── mcp_server/
 │   └── database.py
 └── README.md
+```
