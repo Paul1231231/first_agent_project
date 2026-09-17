@@ -49,25 +49,16 @@ Architecture
 
 Project structure
 
-A recommended project structure is:
-
 first_agent_project/
-|
-|-- agent/
-|   |
-|   |-- agent.py
-|   |-- prompts.py
-|   |-- queries.py
-|   |-- sql_guard.py
-|   |-- tools.py
-|
-|-- database/
-|   |
-|   |-- schema.sql
-|   |-- synthetic.sql
-|
-|-- mcp_server/
-|   |
-|   |-- database.py
-|
-`-- README.md
+├── agent/
+│   ├── agent.py
+│   ├── prompts.py
+│   ├── queries.py
+│   ├── sql_guard.py
+│   └── tools.py
+├── database/
+│   ├── schema.sql
+│   └── synthetic.sql
+├── mcp_server/
+│   └── database.py
+└── README.md
