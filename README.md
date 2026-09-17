@@ -51,21 +51,23 @@ Project structure
 
 A recommended project structure is:
 
-first_agent_project/\n
-|\n
-|-- agent/\n
-|   |\n
-|   |-- agent.py\n
-|   |-- prompts.py\n
-|   |-- queries.py\n
-|   |-- sql_guard.py\n
-|   |-- tools.py\n
-|-- database/\n
-|   |\n
-|   |-- schema.sql\n
-|   |-- synthetic.sql\n
-|-- mcp_server/\n
-|   |\n
-|   |-- database.py\n
+first_agent_project/
+|
+|-- agent/
+|   |
+|   |-- agent.py
+|   |-- prompts.py
+|   |-- queries.py
+|   |-- sql_guard.py
+|   |-- tools.py
+|
+|-- database/
+|   |
+|   |-- schema.sql
+|   |-- synthetic.sql
+|
+|-- mcp_server/
+|   |
+|   |-- database.py
+|
 `-- README.md
-
