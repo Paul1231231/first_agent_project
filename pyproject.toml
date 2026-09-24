@@ -1,0 +1,23 @@
+[project]
+name = "first-agent-project"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "paul1231231", email = "pokpokli557@gmail.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "langchain-core>=1.6.4",
+    "langchain-ollama>=1.1.0",
+    "mcp>=2.2.0",
+    "python-dotenv>=1.2.3",
+    "sqlglot>=30.19.0",
+]
+
+[project.scripts]
+first-agent-project = "first_agent_project:main"
+
+[build-system]
+requires = ["uv_build>=0.12.17,<0.13.0"]
+build-backend = "uv_build"

@@ -4,8 +4,6 @@ A proof-of-concept AI database agent that uses LangChain + Ollama + MCP + Postgr
 
 The LLM decides which application-level tool to call. Each application tool contains a pre-written SQL query and uses the live MCP session to execute that SQL through the PostgreSQL MCP server.
 
-The LLM does not generate arbitrary SQL.
-
 Architecture
 
                          User

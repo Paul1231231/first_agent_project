@@ -4,13 +4,40 @@ from langchain_ollama import ChatOllama
 from langchain_core.messages import HumanMessage, AIMessage, ToolMessage, SystemMessage
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
-from prompts import SYSTEM_PROMPT
-from tools import create_tools
+from agent.prompts import SYSTEM_PROMPT
+from agent.tools import create_tools
+from agent.sql_extraction import extract_generated_sql
+from agent.sql_guard import UnsafeSQL, validate_sql
+import dotenv
+
+# Load environment variables from .env file
+dotenv.load_dotenv()
+MAX_AGENT_ROUNDS = 5
 
 # Now os.getenv will successfully fetch it from your .env file
-DATABASE_URL = "postgresql://pokpo:password@localhost:5432/my_app_db"
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    raise RuntimeError("Missing DATABASE_URL")
 
+async def execute_generated_sql(session, raw_sql: str) -> str:
+    """Validate and execute model-generated read-only SQL."""
 
+    validated_sql = validate_sql(raw_sql)
+
+    result = await session.call_tool(
+        name="query",
+        arguments={"sql": validated_sql},
+    )
+
+    parts = []
+
+    for item in getattr(result, "content", []):
+        text = getattr(item, "text", None)
+
+        if text:
+            parts.append(text)
+
+    return "\n".join(parts)
 
 async def run_agent():
     # 1. Establish your MCP connection
@@ -26,7 +53,6 @@ async def run_agent():
             await session.initialize()
 
             # 2. List tools from MCP and adapt them into LangChain-compatible tool formats
-            mcp_tools_response = await session.list_tools()
             tools = create_tools(session)
             print("\n=== AVAILABLE TOOLS ===")
 
@@ -58,7 +84,7 @@ async def run_agent():
                 messages.append(HumanMessage(content=user_input))
 
                 # Agent loop to handle reasoning -> tool call -> response evaluation
-                while True:
+                for round_number in range(MAX_AGENT_ROUNDS):
                     # Invoke model with current chat history and bound tools
                     response = llm.invoke(messages)
                     messages.append(response)
@@ -105,8 +131,56 @@ async def run_agent():
                         continue
                     
                     # If no tool calls were requested, print the final text response
-                    print(f"AI: {response.content}\n")
-                    break
+                    generated_sql = extract_generated_sql(response.content)
+
+                    if generated_sql is None:
+                        print(f"AI: {response.content}\n")
+                        break
+
+                    try:
+                        query_result = await execute_generated_sql(
+                            session,
+                            generated_sql,
+                        )
+                    except UnsafeSQL as exc:
+                        print(f"Rejected unsafe SQL: {exc}")
+
+                        messages.append(
+                            HumanMessage(
+                                content=(
+                                    "The generated SQL was rejected by the SQL safety validator. "
+                                    f"Reason: {exc}. Generate a corrected read-only SELECT query."
+                                )
+                            )
+                        )
+                        continue
+                    except Exception as exc:
+                        print(f"Database error: {exc}")
+
+                        messages.append(
+                            HumanMessage(
+                                content=(
+                                    "The database query failed. "
+                                    f"Error: {exc}. Generate a corrected query."
+                                )
+                            )
+                        )
+                        continue
+
+                    messages.append(
+                        HumanMessage(
+                            content=(
+                                "The validated SQL was executed. "
+                                "Here is the database result:\n\n"
+                                f"{query_result}\n\n"
+                                "Explain the result clearly to the user. "
+                                "Do not generate another SQL query unless necessary."
+                            )
+                        )
+                    )
+
+                else:
+                    print("AI: Maximum agent rounds reached.")
 
 if __name__ == "__main__":
     asyncio.run(run_agent())
