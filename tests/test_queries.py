@@ -1,6 +1,6 @@
 import pytest
 
-from agent.queries import (
+from first_agent_project.queries import (
     customers_sql,
     order_summary_sql,
     sales_by_product_sql,

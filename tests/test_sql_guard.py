@@ -1,6 +1,6 @@
 import pytest
 
-from agent.sql_guard import UnsafeSQL, validate_sql
+from first_agent_project.sql_guard import UnsafeSQL, validate_sql
 
 
 def test_allows_safe_select():

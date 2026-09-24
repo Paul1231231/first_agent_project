@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from agent.tools import create_tools, extract_result
+from first_agent_project.tools import create_tools, extract_result
 from tests.fakes import FakeContent, FakeMCPResult, FakeMCPSession
 
 

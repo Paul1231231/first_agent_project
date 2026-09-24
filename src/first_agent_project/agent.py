@@ -1,13 +1,13 @@
 import asyncio
 import os
 from langchain_ollama import ChatOllama
-from langchain_core.messages import HumanMessage, AIMessage, ToolMessage, SystemMessage
+from langchain_core.messages import HumanMessage, ToolMessage, SystemMessage
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
-from agent.prompts import SYSTEM_PROMPT
-from agent.tools import create_tools
-from agent.sql_extraction import extract_generated_sql
-from agent.sql_guard import UnsafeSQL, validate_sql
+from .prompts import SYSTEM_PROMPT
+from .tools import create_tools
+from .sql_extraction import extract_generated_sql
+from .sql_guard import UnsafeSQL, validate_sql
 import dotenv
 
 # Load environment variables from .env file
