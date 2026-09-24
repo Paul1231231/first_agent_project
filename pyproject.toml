@@ -6,7 +6,7 @@ readme = "README.md"
 authors = [
     { name = "paul1231231", email = "pokpokli557@gmail.com" }
 ]
-requires-python = ">=3.14"
+requires-python = ">=3.12"
 dependencies = [
     "langchain-core>=1.6.4",
     "langchain-ollama>=1.1.0",

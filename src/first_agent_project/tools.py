@@ -5,7 +5,7 @@ from typing import Any, Optional
 
 from langchain_core.tools import tool
 
-from agent.queries import (
+from .queries import (
     customer_count_sql,
     customers_sql,
     order_summary_sql,
